@@ -1,1 +1,1349 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบแจ้งซ่อม 1204</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Sarabun', 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f8faff 0%, #f3f0ff 50%, #fdf2f8 100%);
+            -webkit-tap-highlight-color: transparent;
+        }
+        button, label, input, select, textarea, .clickable-touch {
+            touch-action: manipulation;
+        }
+    </style>
+</head>
+<body class="text-slate-700 min-h-screen flex flex-col">
 
+    <!-- แถบเมนูนำทางหลัก (Modern Pastel Gradient Header) -->
+    <header class="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white shadow-lg shadow-indigo-200/50 sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto px-4 py-3.5 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <div class="bg-white/95 backdrop-blur-md p-1.5 rounded-2xl border border-white/40 shadow-sm flex items-center justify-center">
+                    <img src="https://i.ibb.co/GQqkFPsY/jaae-PNGTran-small.png" onerror="this.onerror=null;this.src='https://placehold.co/48x48/6366f1/ffffff?text=1204';" alt="โลโก้ระบบแจ้งซ่อม 1204" class="w-10 h-10 object-contain rounded-xl">
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="text-lg font-bold leading-tight tracking-wide drop-shadow-xs">ระบบแจ้งซ่อม 1204</h1>
+                        <span id="sync-status-badge" class="text-[11px] bg-white/20 px-2 py-0.5 rounded-full font-medium">โหมดออฟไลน์</span>
+                    </div>
+                    <p class="text-xs text-purple-100 font-medium">กลุ่มสาระการเรียนรู้วิทยาศาสตร์และเทคโนโลยี (40 เครื่อง)</p>
+                </div>
+            </div>
+
+            <nav class="flex flex-wrap items-center gap-2 bg-white/15 backdrop-blur-md p-1.5 rounded-2xl border border-white/20">
+                <button onclick="switchTab('checkin')" id="nav-checkin" class="px-4 py-2 rounded-xl text-sm font-semibold bg-white text-indigo-600 shadow-sm transition">📝 แจ้งซ่อม / เช็คเครื่อง</button>
+                <button onclick="switchTab('reports')" id="nav-reports" class="hidden px-4 py-2 rounded-xl text-sm font-semibold text-white hover:bg-white/20 transition">📊 รายงาน (A4)</button>
+                <button onclick="switchTab('settings')" id="nav-settings" class="hidden px-4 py-2 rounded-xl text-sm font-semibold text-white hover:bg-white/20 transition">⚙️ ตั้งค่าระบบ</button>
+                <button onclick="openAdminLogin()" id="nav-admin-login" class="px-4 py-2 rounded-xl text-sm font-semibold bg-amber-200/90 text-amber-900 hover:bg-amber-200 shadow-xs transition">🔒 ผู้ดูแลระบบ</button>
+                <button onclick="logoutAdmin()" id="nav-admin-logout" class="hidden px-4 py-2 rounded-xl text-sm font-semibold bg-rose-200/90 text-rose-900 hover:bg-rose-200 shadow-xs transition">🚪 ออกจากระบบ Admin</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- พื้นที่เนื้อหาหลัก -->
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 py-6">
+
+        <!-- ==================== TAB 1: แจ้งซ่อม / เช็คลิสต์ (สำหรับนักเรียน) ==================== -->
+        <section id="tab-checkin" class="space-y-6">
+            <div class="bg-gradient-to-r from-amber-50 to-rose-50 border border-rose-200/70 p-4 rounded-2xl shadow-xs flex items-start gap-3.5">
+                <span class="text-2xl bg-white p-1.5 rounded-xl shadow-xs">⚠️</span>
+                <div class="text-sm text-slate-700 leading-relaxed">
+                    <p class="font-bold text-rose-800">ข้อตกลงการใช้ห้องปฏิบัติการคอมพิวเตอร์ (เฉพาะกรณีพบปัญหา/อุปกรณ์ชำรุด):</p>
+                    <p>นักเรียนที่ไม่พบปัญหาสามารถใช้งานและชัตดาวน์เครื่องตามปกติ <strong class="text-indigo-700">หากพบอุปกรณ์ชำรุด มีรอยแงะงัด หรือโต๊ะสกปรก</strong> ให้รีบแจ้งผ่านแบบฟอร์มนี้ทันทีพร้อมแนบหลักฐาน เพื่อให้ครูติดตามผู้รับผิดชอบในคาบก่อนหน้าได้อย่างถูกต้อง</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- คอลัมน์ซ้าย: ยืนยันตัวตนนักเรียน + กล้อง -->
+                <div class="bg-white/90 backdrop-blur-xs p-6 rounded-3xl shadow-sm border border-purple-100 space-y-4">
+                    <h2 class="text-base font-bold text-indigo-800 border-b border-purple-100 pb-2.5 flex items-center gap-2">
+                        <span class="bg-indigo-100 text-indigo-600 p-1.5 rounded-xl text-sm">👤</span> 1. ยืนยันตัวตนผู้แจ้ง
+                    </h2>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-600 mb-1.5">รหัสประจำตัวนักเรียน (5 หลัก)</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="student-id-input" maxlength="10" onkeydown="if(event.key==='Enter'){event.preventDefault();lookupStudent();}" placeholder="เช่น 10001" class="w-full bg-slate-50/70 border border-purple-200 rounded-2xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-purple-400 focus:bg-white focus:outline-none transition">
+                            <button type="button" onclick="lookupStudent()" class="bg-gradient-to-r from-indigo-500 to-purple-500 text-white px-5 py-2.5 rounded-2xl text-sm font-semibold hover:from-indigo-600 hover:to-purple-600 active:scale-95 shadow-xs transition whitespace-nowrap">ค้นหา</button>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1.5">ตัวอย่างรหัสทดสอบ: 10001, 10002, 10003</p>
+                    </div>
+
+                    <div id="student-info-card" class="hidden bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-200/80 rounded-2xl p-4 space-y-1 shadow-xs">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-bold text-indigo-500 uppercase">ข้อมูลนักเรียนที่พบ</span>
+                            <span class="bg-emerald-100 text-emerald-700 text-xs px-2.5 py-0.5 rounded-full font-semibold">ยืนยันแล้ว</span>
+                        </div>
+                        <p id="disp-student-name" class="font-bold text-slate-800 text-base">-</p>
+                        <p id="disp-student-class" class="text-sm text-slate-600">-</p>
+                    </div>
+
+                    <!-- ระบบกล้องถ่ายภาพยืนยันตัวตน -->
+                    <div class="space-y-2.5 pt-3 border-t border-purple-100">
+                        <div class="flex justify-between items-center">
+                            <label class="block text-sm font-semibold text-slate-600">📸 ถ่ายภาพยืนยันตัวตนผู้แจ้ง</label>
+                            <span id="camera-status" class="text-xs font-medium text-purple-500">พร้อมใช้งาน</span>
+                        </div>
+
+                        <div class="relative bg-slate-800 rounded-2xl overflow-hidden aspect-video flex items-center justify-center border-2 border-purple-100 shadow-inner">
+                            <video id="webcam-video" autoplay playsinline class="w-full h-full object-cover hidden"></video>
+                            <img id="captured-photo" alt="ภาพถ่ายยืนยันตัวตน" class="w-full h-full object-cover hidden">
+                            <div id="camera-placeholder" class="text-center p-4 text-slate-300">
+                                <p class="text-3xl mb-1">📷</p>
+                                <p class="text-xs">กดปุ่ม "เปิดกล้อง" เพื่อถ่ายภาพยืนยันตัวตน</p>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap gap-2">
+                            <button type="button" onclick="startCamera()" id="btn-start-cam" class="flex-1 bg-indigo-100 text-indigo-700 py-2 px-3 rounded-2xl text-xs font-bold hover:bg-indigo-200 transition">เปิดกล้อง</button>
+                            <button type="button" onclick="capturePhoto()" id="btn-capture-cam" class="hidden flex-1 bg-emerald-500 text-white py-2 px-3 rounded-2xl text-xs font-bold hover:bg-emerald-600 shadow-xs transition">ถ่ายภาพ</button>
+                            <button type="button" onclick="retakePhoto()" id="btn-retake-cam" class="hidden flex-1 bg-amber-400 text-amber-950 py-2 px-3 rounded-2xl text-xs font-bold hover:bg-amber-500 transition">ถ่ายใหม่</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- คอลัมน์กลางและขวา: รายละเอียดเครื่อง คาบเรียน และรายการปัญหา -->
+                <div class="lg:col-span-2 bg-white/90 backdrop-blur-xs p-6 rounded-3xl shadow-sm border border-purple-100 space-y-5">
+                    <h2 class="text-base font-bold text-indigo-800 border-b border-purple-100 pb-2.5 flex items-center gap-2">
+                        <span class="bg-pink-100 text-pink-600 p-1.5 rounded-xl text-sm">🖥️</span> 2. รายละเอียดเครื่อง คาบเรียน และปัญหาที่พบ
+                    </h2>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-600 mb-1">หมายเลขเครื่องคอมพิวเตอร์ <span class="text-rose-500">*</span></label>
+                            <select id="pc-number" class="w-full bg-slate-50/70 border border-purple-200 rounded-2xl px-3.5 py-2 text-sm focus:ring-2 focus:ring-purple-400 focus:bg-white focus:outline-none"></select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-600 mb-1">วันที่เรียน <span class="text-rose-500">*</span></label>
+                            <input type="date" id="report-date" class="w-full bg-slate-50/70 border border-purple-200 rounded-2xl px-3.5 py-2 text-sm focus:ring-2 focus:ring-purple-400 focus:bg-white focus:outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-600 mb-1">คาบเรียน (50 นาที) <span class="text-rose-500">*</span></label>
+                            <select id="class-period" class="w-full bg-slate-50/70 border border-purple-200 rounded-2xl px-3.5 py-2 text-sm focus:ring-2 focus:ring-purple-400 focus:bg-white focus:outline-none"></select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-600 mb-1">รายวิชาที่เรียน <span class="text-rose-500">*</span></label>
+                        <select id="subject-select" class="w-full bg-slate-50/70 border border-purple-200 rounded-2xl px-3.5 py-2 text-sm focus:ring-2 focus:ring-purple-400 focus:bg-white focus:outline-none"></select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-600 mb-2">เลือกปัญหาหรืออุปกรณ์ที่ชำรุด (เลือกได้มากกว่า 1 ข้อ) <span class="text-rose-500">*</span></label>
+                        <div id="checklist-items-container" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5"></div>
+                    </div>
+
+                    <!-- แนบภาพถ่ายอุปกรณ์ที่ชำรุด 1-3 ภาพ -->
+                    <div class="bg-purple-50/50 p-4 rounded-2xl border border-purple-100 space-y-2">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <label class="block text-sm font-semibold text-slate-700">🖼️ แนบภาพถ่ายอุปกรณ์ที่ชำรุด (1 - 3 ภาพ)</label>
+                            <span id="evidence-count-badge" class="text-xs font-bold text-purple-700 bg-purple-100 px-3 py-0.5 rounded-full">0 / 3 ภาพ</span>
+                        </div>
+                        <input type="file" id="evidence-images-input" accept="image/*" multiple onchange="handleEvidenceUpload(event)" class="block w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-2xl file:border-0 file:text-xs file:font-semibold file:bg-purple-500 file:text-white hover:file:bg-purple-600 cursor-pointer transition">
+                        <div id="evidence-preview-container" class="grid grid-cols-3 gap-3 pt-2"></div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-600 mb-1">รายละเอียดปัญหาเพิ่มเติม / อาการที่พบ</label>
+                        <textarea id="issue-notes" rows="2" placeholder="ระบุรายละเอียดเพิ่มเติม เช่น ปุ่ม Shift กดไม่ติด, เมาส์คลิกซ้ายไม่ได้, มีขยะใต้โต๊ะ..." class="w-full bg-slate-50/70 border border-purple-200 rounded-2xl px-3.5 py-2 text-sm focus:ring-2 focus:ring-purple-400 focus:bg-white focus:outline-none"></textarea>
+                    </div>
+
+                    <div class="pt-2 flex justify-end gap-3">
+                        <button type="button" onclick="resetCheckinForm()" class="px-5 py-2.5 rounded-2xl border border-slate-200 bg-slate-100 text-slate-600 text-sm font-semibold hover:bg-slate-200 transition">ล้างข้อมูล</button>
+                        <button type="button" id="btn-submit-report" onclick="submitRepairReport()" class="px-6 py-2.5 rounded-2xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white text-sm font-bold hover:opacity-95 shadow-md shadow-purple-200 transition">📨 ส่งรายงานแจ้งซ่อม</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== TAB 2: รายงานและพิมพ์ A4 (สำหรับ Admin) ==================== -->
+        <section id="tab-reports" class="hidden space-y-5">
+            <div class="bg-white/90 backdrop-blur-xs p-6 rounded-3xl shadow-sm border border-purple-100 space-y-4">
+                <div class="flex flex-wrap justify-between items-center gap-3">
+                    <h2 class="text-lg font-bold text-indigo-800">📊 รายการแจ้งซ่อมและปัญหาอุปกรณ์ห้องคอมพิวเตอร์</h2>
+                    <div class="flex gap-2">
+                        <button type="button" onclick="fetchFromGoogleSheet(true)" class="bg-emerald-500 text-white px-4 py-2.5 rounded-2xl text-sm font-semibold hover:bg-emerald-600 shadow-xs transition">🔄 ซิงค์ข้อมูลล่าสุด</button>
+                        <button type="button" onclick="printReportA4()" class="bg-gradient-to-r from-indigo-500 to-purple-500 text-white px-5 py-2.5 rounded-2xl text-sm font-semibold hover:from-indigo-600 hover:to-purple-600 shadow-sm transition">🖨️ พิมพ์รายงาน (A4)</button>
+                    </div>
+                </div>
+
+                <!-- แถบตัวกรองข้อมูล (Filter Bar) -->
+                <div class="bg-purple-50/60 p-4 rounded-2xl border border-purple-100 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">ตั้งแต่วันที่</label>
+                        <input type="date" id="filter-date-start" onchange="renderReports()" class="w-full bg-white border border-purple-200 rounded-xl px-2.5 py-1.5 text-xs">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">ถึงวันที่</label>
+                        <input type="date" id="filter-date-end" onchange="renderReports()" class="w-full bg-white border border-purple-200 rounded-xl px-2.5 py-1.5 text-xs">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">ห้องเรียน</label>
+                        <select id="filter-room" onchange="renderReports()" class="w-full bg-white border border-purple-200 rounded-xl px-2.5 py-1.5 text-xs">
+                            <option value="">ทุกห้องเรียน</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">หมายเลขเครื่อง</label>
+                        <select id="filter-pc" onchange="renderReports()" class="w-full bg-white border border-purple-200 rounded-xl px-2.5 py-1.5 text-xs">
+                            <option value="">ทุกเครื่อง (1-40)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">คาบเรียน</label>
+                        <select id="filter-period" onchange="renderReports()" class="w-full bg-white border border-purple-200 rounded-xl px-2.5 py-1.5 text-xs">
+                            <option value="">ทุกคาบเรียน</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">สถานะการดำเนินการ</label>
+                        <div class="flex gap-1.5">
+                            <select id="filter-status" onchange="renderReports()" class="w-full bg-white border border-purple-200 rounded-xl px-2.5 py-1.5 text-xs">
+                                <option value="">ทุกสถานะ</option>
+                                <option value="ยังไม่ได้ดำเนินการ">ยังไม่ได้ดำเนินการ</option>
+                                <option value="รอดำเนินการ">รอดำเนินการ (รับเรื่องแล้ว)</option>
+                                <option value="ดำเนินการแล้ว">ดำเนินการแล้ว</option>
+                            </select>
+                            <button type="button" onclick="clearReportFilters()" class="bg-pink-100 hover:bg-pink-200 text-pink-800 font-semibold px-3 py-1.5 rounded-xl text-xs whitespace-nowrap transition" title="ล้างตัวกรอง">ล้าง</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ตารางแสดงรายงาน -->
+                <div class="overflow-x-auto rounded-2xl border border-purple-100">
+                    <table class="w-full text-left border-collapse text-sm">
+                        <thead>
+                            <tr class="bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-900 border-b border-purple-200">
+                                <th class="py-3 px-3 font-bold">วันที่ / คาบเรียน</th>
+                                <th class="py-3 px-3 font-bold">หมายเลขเครื่อง</th>
+                                <th class="py-3 px-3 font-bold">ผู้แจ้ง (รหัส)</th>
+                                <th class="py-3 px-3 font-bold">ชั้น/เลขที่</th>
+                                <th class="py-3 px-3 font-bold">ปัญหาที่พบ</th>
+                                <th class="py-3 px-3 font-bold">รายละเอียดเพิ่มเติม</th>
+                                <th class="py-3 px-3 font-bold">สถานะ / ผลการดำเนินการ</th>
+                                <th class="py-3 px-3 font-bold no-print">หลักฐานภาพ</th>
+                                <th class="py-3 px-3 font-bold text-center no-print">จัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="report-table-body" class="divide-y divide-purple-100 bg-white"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== TAB 3: ตั้งค่าระบบ (สำหรับ Admin) ==================== -->
+        <section id="tab-settings" class="hidden space-y-6">
+            <div class="bg-white/90 backdrop-blur-xs p-6 rounded-3xl shadow-sm border border-purple-100 space-y-6">
+                <div class="border-b border-purple-100 pb-3">
+                    <h2 class="text-lg font-bold text-indigo-800">⚙️ ตั้งค่าระบบและฐานข้อมูลห้องปฏิบัติการ</h2>
+                    <p class="text-xs text-slate-500">จัดการรายชื่อนักเรียน รายการปัญหา รายวิชา และการเชื่อมต่อ Google Sheets API</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- 1. นำเข้าข้อมูลนักเรียน (CSV) -->
+                    <div class="p-5 border border-indigo-100 rounded-2xl space-y-3 bg-indigo-50/40">
+                        <h3 class="font-bold text-sm text-indigo-900">1. นำเข้าข้อมูลนักเรียน (CSV)</h3>
+                        <p class="text-xs text-slate-500">รูปแบบคอลัมน์: <code class="bg-white border border-indigo-100 px-1.5 py-0.5 rounded-md text-indigo-700">รหัสประจำตัว,ชื่อ-นามสกุล,ห้องเรียน,เลขที่</code></p>
+                        <input type="file" id="csv-student-file" accept=".csv" onchange="importStudentsCSV(event)" class="block w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3.5 file:rounded-xl file:border-0 file:font-semibold file:bg-indigo-500 file:text-white hover:file:bg-indigo-600 cursor-pointer">
+                        <div class="text-xs text-slate-600">จำนวนนักเรียนในระบบปัจจุบัน: <strong id="total-students-count" class="text-indigo-700">0</strong> คน</div>
+                    </div>
+
+                    <!-- 2. ตั้งค่าการเชื่อมต่อ Google Apps Script Web App URL -->
+                    <div class="p-5 border border-purple-100 rounded-2xl space-y-3 bg-purple-50/40">
+                        <h3 class="font-bold text-sm text-purple-900">2. ตั้งค่าการเชื่อมต่อ Google Apps Script Web App URL</h3>
+                        <p class="text-xs text-slate-500">วางลิงก์ Web App URL (ลงท้ายด้วย <code class="bg-white px-1 rounded text-purple-700">/exec</code>) ที่ได้จากการ Deploy</p>
+                        <div class="space-y-2">
+                            <input type="url" id="cfg-script-url" placeholder="https://script.google.com/macros/s/...../exec" class="w-full bg-white border border-purple-200 rounded-xl px-3 py-2 text-xs">
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <button type="button" onclick="saveGoogleConfig()" class="bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-semibold hover:bg-emerald-600 transition">💾 บันทึก URL และดึงข้อมูล</button>
+                            <button type="button" onclick="syncMasterDataToSheet()" class="bg-indigo-500 text-white px-4 py-2 rounded-xl text-xs font-semibold hover:bg-indigo-600 transition">☁️ อัปโหลดข้อมูลตั้งต้นขึ้น Sheet</button>
+                        </div>
+                    </div>
+
+                    <!-- 3. สำรองข้อมูล / กู้คืน / ล้างข้อมูลปีการศึกษาใหม่ -->
+                    <div class="p-5 border border-pink-100 rounded-2xl space-y-3 bg-pink-50/40">
+                        <h3 class="font-bold text-sm text-pink-900">3. สำรองข้อมูลและจัดการปีการศึกษา</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <button type="button" onclick="exportBackupJSON()" class="bg-indigo-500 text-white px-3.5 py-2 rounded-xl text-xs font-semibold hover:bg-indigo-600 transition">⬇️ สำรองข้อมูล (Backup JSON)</button>
+                            <label class="bg-purple-500 text-white px-3.5 py-2 rounded-xl text-xs font-semibold hover:bg-purple-600 transition cursor-pointer">
+                                ⬆️ กู้คืนข้อมูล (Restore)
+                                <input type="file" accept=".json" onchange="restoreBackupJSON(event)" class="hidden">
+                            </label>
+                            <button type="button" onclick="confirmClearAllReports()" class="bg-rose-500 text-white px-3.5 py-2 rounded-xl text-xs font-semibold hover:bg-rose-600 transition">🗑️ ล้างประวัติในเครื่อง</button>
+                        </div>
+                    </div>
+
+                    <!-- 4. จัดการรายการปัญหา (เพิ่ม / แก้ไข / ลบ) -->
+                    <div class="p-5 border border-indigo-100 rounded-2xl space-y-3 bg-indigo-50/40">
+                        <h3 class="font-bold text-sm text-indigo-900">4. จัดการรายการปัญหา (เพิ่ม / แก้ไข / ลบ)</h3>
+                        <div class="flex gap-2">
+                            <input type="text" id="new-issue-input" onkeydown="if(event.key==='Enter'){event.preventDefault();addIssueItem();}" placeholder="ระบุรายการปัญหาใหม่ เช่น จอภาพไม่ติด..." class="flex-grow bg-white border border-indigo-200 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+                            <button type="button" onclick="addIssueItem()" class="bg-indigo-500 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-indigo-600 active:scale-95 transition whitespace-nowrap">+ เพิ่มรายการ</button>
+                        </div>
+                        <ul id="settings-issue-list" class="space-y-2 max-h-48 overflow-y-auto pr-1"></ul>
+                    </div>
+
+                    <!-- 5. จัดการรายวิชาที่เรียน (เพิ่ม / แก้ไข / ลบ) -->
+                    <div class="p-5 border border-purple-100 rounded-2xl space-y-3 bg-purple-50/40">
+                        <h3 class="font-bold text-sm text-purple-900">5. จัดการรายวิชาที่เรียน (เพิ่ม / แก้ไข / ลบ)</h3>
+                        <div class="flex gap-2">
+                            <input type="text" id="new-subject-input" onkeydown="if(event.key==='Enter'){event.preventDefault();addSubject();}" placeholder="ระบุรหัสวิชาและชื่อวิชา เช่น ว23102 วิทยาการคำนวณ..." class="flex-grow bg-white border border-purple-200 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-purple-400 focus:outline-none">
+                            <button type="button" onclick="addSubject()" class="bg-purple-500 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-purple-600 active:scale-95 transition whitespace-nowrap">+ เพิ่มรายวิชา</button>
+                        </div>
+                        <ul id="settings-subject-list" class="space-y-2 max-h-48 overflow-y-auto pr-1"></ul>
+                    </div>
+
+                    <!-- 6. เปลี่ยนรหัสผ่านผู้ดูแลระบบ (Admin) -->
+                    <div class="p-5 border border-amber-200/70 rounded-2xl space-y-3 bg-amber-50/50">
+                        <h3 class="font-bold text-sm text-amber-900">6. เปลี่ยนรหัสผ่านผู้ดูแลระบบ (Admin)</h3>
+                        <p class="text-xs text-slate-500">รหัสผ่านเริ่มต้นคือ 1234 ใช้สำหรับเข้าดูเมนูรายงานและตั้งค่าระบบ</p>
+                        <div class="space-y-2">
+                            <input type="password" id="old-admin-pass" onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('new-admin-pass').focus();}" placeholder="รหัสผ่านเดิม" class="w-full bg-white border border-amber-200 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-amber-400 focus:outline-none">
+                            <input type="password" id="new-admin-pass" onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('confirm-admin-pass').focus();}" placeholder="รหัสผ่านใหม่" class="w-full bg-white border border-amber-200 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-amber-400 focus:outline-none">
+                            <input type="password" id="confirm-admin-pass" onkeydown="if(event.key==='Enter'){event.preventDefault();changeAdminPassword();}" placeholder="ยืนยันรหัสผ่านใหม่" class="w-full bg-white border border-amber-200 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-amber-400 focus:outline-none">
+                        </div>
+                        <button type="button" onclick="changeAdminPassword()" class="bg-amber-400 text-amber-950 px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-amber-500 active:scale-95 transition">🔑 เปลี่ยนรหัสผ่าน Admin</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ส่วนท้ายเว็บแอปพลิเคชัน (Footer) -->
+    <footer class="py-4 px-4 text-center text-xs text-slate-500 border-t border-purple-100/80 bg-white/60 backdrop-blur-xs mt-auto">
+        <p class="font-medium">พัฒนาโดย <span class="text-indigo-700 font-semibold">ครูศรันย์กรณ์ อาจณรงค์กร</span> ปี 2026</p>
+    </footer>
+
+    <!-- หน้าต่าง Modal กลาง -->
+    <div id="custom-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl space-y-4">
+            <h3 id="modal-title" class="text-lg font-bold text-slate-800">แจ้งเตือน</h3>
+            <p id="modal-message" class="text-sm text-slate-600"></p>
+            <div id="modal-input-container" class="hidden">
+                <input type="text" id="modal-input" onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('modal-confirm-btn').click();}" class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+            </div>
+            <div class="flex justify-end gap-2 pt-2">
+                <button type="button" id="modal-cancel-btn" onclick="closeModal()" class="hidden px-4 py-2.5 rounded-xl border border-slate-300 text-slate-600 text-sm font-medium hover:bg-slate-100 active:scale-95">ยกเลิก</button>
+                <button type="button" id="modal-confirm-btn" onclick="closeModal()" class="px-5 py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 active:scale-95">ตกลง</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- หน้าต่างอัปเดตสถานะและบันทึกผลการดำเนินการ -->
+    <div id="status-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-purple-100 space-y-4">
+            <div class="border-b border-purple-100 pb-2.5">
+                <h3 class="text-lg font-bold text-indigo-800">🛠️ อัปเดตสถานะและผลการดำเนินการ</h3>
+                <p id="status-modal-subtitle" class="text-xs text-slate-500 mt-0.5">-</p>
+            </div>
+            <input type="hidden" id="status-report-id">
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-1.5">สถานะการดำเนินงาน</label>
+                <select id="status-select" class="w-full bg-slate-50 border border-purple-200 rounded-2xl px-3.5 py-2.5 text-sm font-medium focus:ring-2 focus:ring-purple-400 focus:outline-none">
+                    <option value="ยังไม่ได้ดำเนินการ">🔴 ยังไม่ได้ดำเนินการ</option>
+                    <option value="รอดำเนินการ">🟡 รอดำเนินการ (รับเรื่องแล้ว)</option>
+                    <option value="ดำเนินการแล้ว">🟢 ดำเนินการแล้ว</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-1.5">ผู้แก้ไข / ผู้รับผิดชอบการซ่อม</label>
+                <input type="text" id="status-resolver" placeholder="เช่น ครูผู้ดูแลห้องคอมฯ, ช่างเทคนิค, ร้านซ่อม..." class="w-full bg-slate-50 border border-purple-200 rounded-2xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-purple-400 focus:outline-none">
+            </div>
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-1.5">บันทึกผลการดำเนินการ / วิธีแก้ไข</label>
+                <textarea id="status-action-note" rows="3" placeholder="เช่น เปลี่ยนเมาส์ตัวใหม่ทดแทน, ทำความสะอาดเรียบร้อย, ส่งซ่อมศูนย์..." class="w-full bg-slate-50 border border-purple-200 rounded-2xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-purple-400 focus:outline-none"></textarea>
+            </div>
+            <div class="flex justify-end gap-2 pt-2">
+                <button type="button" onclick="closeStatusModal()" class="px-4 py-2.5 rounded-2xl border border-slate-200 bg-slate-100 text-slate-600 text-sm font-semibold hover:bg-slate-200 transition">ยกเลิก</button>
+                <button type="button" onclick="saveStatusUpdate()" class="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 text-white text-sm font-bold hover:opacity-95 shadow-sm transition">บันทึกผล</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- หน้าต่างดูรูปภาพขยาย (Image Lightbox Modal) -->
+    <div id="image-preview-modal" onclick="closeImageModal()" class="hidden fixed inset-0 bg-slate-900/80 z-50 flex items-center justify-center p-4">
+        <div class="relative max-w-2xl w-full bg-white rounded-2xl p-3 shadow-2xl" onclick="event.stopPropagation()">
+            <img id="lightbox-img" src="" alt="ภาพขยาย" class="w-full max-h-[75vh] object-contain rounded-xl">
+            <div class="mt-3 flex justify-between items-center px-2">
+                <span id="lightbox-caption" class="text-sm font-medium text-slate-700"></span>
+                <button type="button" onclick="closeImageModal()" class="bg-slate-800 text-white px-4 py-1.5 rounded-xl text-xs font-medium hover:bg-slate-700">ปิดหน้าต่าง</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ข้อมูลเริ่มต้น (กรณี Offline หรือยังไม่ได้เชื่อมต่อ Google Sheets)
+        const defaultStudents = [
+            { id: "10001", name: "เด็กชายสมชาย ใจดี", room: "ม.1/1", no: "1" },
+            { id: "10002", name: "เด็กหญิงสมหญิง รักเรียน", room: "ม.1/1", no: "2" },
+            { id: "10003", name: "นายวิชัย เก่งกล้า", room: "ม.3/2", no: "15" }
+        ];
+
+        const defaultIssues = [
+            "เมาส์ชำรุด / คลิกไม่ติด / หาย",
+            "คีย์บอร์ดปุ่มหลุด / พิมพ์ไม่ได้",
+            "หน้าจอคอมพิวเตอร์ไม่ติด / จอแตก",
+            "เครื่องเปิดไม่ติด / ค้าง / อินเทอร์เน็ตหลุด",
+            "พบรอยแงะงัด / ขีดข่วนบนโต๊ะหรืออุปกรณ์",
+            "มีขยะ / คราบสกปรกหลงเหลือบนโต๊ะ"
+        ];
+
+        const defaultSubjects = [
+            "ว21102 วิทยาการคำนวณ 1",
+            "ว22102 วิทยาการคำนวณ 2",
+            "ว23102 วิทยาการคำนวณ 3",
+            "ว31104 เทคโนโลยี (วิทยาการคำนวณ)",
+            "ง20201 คอมพิวเตอร์เพิ่มเติม"
+        ];
+
+        // สามารถใส่ Web App URL ของ Google Apps Script ที่ Deploy แล้วตรงนี้ได้ทันที (หรือไปกรอกในหน้าตั้งค่า)
+        const DEFAULT_SCRIPT_URL = "";
+
+        let studentsDB = JSON.parse(localStorage.getItem('lab_students')) || defaultStudents;
+        let issueItemsDB = JSON.parse(localStorage.getItem('lab_issues')) || defaultIssues;
+        let subjectsDB = JSON.parse(localStorage.getItem('lab_subjects')) || defaultSubjects;
+        let reportsDB = JSON.parse(localStorage.getItem('lab_reports')) || [];
+        let googleConfig = JSON.parse(localStorage.getItem('lab_google_cfg')) || { scriptUrl: DEFAULT_SCRIPT_URL };
+
+        let selectedStudent = null;
+        let webcamStream = null;
+        let currentSnapshotData = null;
+        let currentEvidenceImages = [];
+        let adminPassword = localStorage.getItem('lab_admin_pass') || '1234';
+        let isAdminLoggedIn = false;
+
+        window.onload = function() {
+            initPCSelectOptions();
+            initClassPeriods();
+            renderSubjectDropdown();
+            renderChecklistCheckboxes();
+            setTodayDate();
+            loadGoogleConfigInputs();
+            updateStudentCount();
+            if (googleConfig.scriptUrl) {
+                fetchFromGoogleSheet(false);
+            }
+        };
+
+        // เชื่อมต่อ API Google Apps Script (GET)
+        async function fetchFromGoogleSheet(showNotify = false) {
+            if (!googleConfig.scriptUrl) return;
+            const badge = document.getElementById('sync-status-badge');
+            badge.innerText = "กำลังซิงค์ข้อมูล...";
+            try {
+                const res = await fetch(`${googleConfig.scriptUrl}?action=getAllData`);
+                const json = await res.json();
+                if (json.status === 'success' && json.data) {
+                    if (json.data.students && json.data.students.length > 0) {
+                        studentsDB = json.data.students;
+                        localStorage.setItem('lab_students', JSON.stringify(studentsDB));
+                    }
+                    if (json.data.issues && json.data.issues.length > 0) {
+                        issueItemsDB = json.data.issues;
+                        localStorage.setItem('lab_issues', JSON.stringify(issueItemsDB));
+                    }
+                    if (json.data.subjects && json.data.subjects.length > 0) {
+                        subjectsDB = json.data.subjects;
+                        localStorage.setItem('lab_subjects', JSON.stringify(subjectsDB));
+                    }
+                    if (json.data.reports) {
+                        reportsDB = json.data.reports;
+                        localStorage.setItem('lab_reports', JSON.stringify(reportsDB));
+                    }
+                    updateStudentCount();
+                    renderChecklistCheckboxes();
+                    renderSubjectDropdown();
+                    if (!document.getElementById('tab-reports').classList.contains('hidden')) {
+                        populateRoomFilter();
+                        renderReports();
+                    }
+                    badge.innerText = "🟢 เชื่อมต่อ Google Sheet";
+                    if (showNotify) showModal("ซิงค์สำเร็จ", "ดึงข้อมูลล่าสุดจาก Google Sheets เรียบร้อยแล้ว");
+                }
+            } catch (err) {
+                badge.innerText = "⚠️ ออฟไลน์ (Local)";
+                if (showNotify) showModal("ไม่สามารถเชื่อมต่อได้", "ตรวจสอบ Web App URL หรือการตั้งค่าสิทธิ์การเข้าถึง (Anyone)");
+            }
+        }
+
+        // ส่งข้อมูลไปยัง Google Apps Script (POST)
+        async function postToGoogleSheet(payload) {
+            if (!googleConfig.scriptUrl) return null;
+            try {
+                const res = await fetch(googleConfig.scriptUrl, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+                return await res.json();
+            } catch (err) {
+                console.error("Google Sheet POST Error:", err);
+                return null;
+            }
+        }
+
+        function initPCSelectOptions() {
+            const pcSelect = document.getElementById('pc-number');
+            const filterPcSelect = document.getElementById('filter-pc');
+            pcSelect.innerHTML = '<option value="">-- เลือกหมายเลขเครื่อง --</option>';
+            filterPcSelect.innerHTML = '<option value="">ทุกเครื่อง (1-40)</option>';
+            for (let i = 1; i <= 40; i++) {
+                const label = `เครื่องที่ ${String(i).padStart(2, '0')}`;
+                pcSelect.innerHTML += `<option value="${label}">${label}</option>`;
+                filterPcSelect.innerHTML += `<option value="${label}">${label}</option>`;
+            }
+        }
+
+        function initClassPeriods() {
+            const periodSelect = document.getElementById('class-period');
+            const filterPeriodSelect = document.getElementById('filter-period');
+            periodSelect.innerHTML = '';
+            filterPeriodSelect.innerHTML = '<option value="">ทุกคาบเรียน</option>';
+
+            let startMinutes = 8 * 60 + 30;
+            for (let p = 1; p <= 9; p++) {
+                const endMinutes = startMinutes + 50;
+                const startStr = formatMinutesToTime(startMinutes);
+                const endStr = formatMinutesToTime(endMinutes);
+                const text = `คาบที่ ${p} (${startStr} - ${endStr} น.)`;
+                periodSelect.innerHTML += `<option value="${text}">${text}</option>`;
+                filterPeriodSelect.innerHTML += `<option value="${text}">${text}</option>`;
+                startMinutes = endMinutes;
+            }
+        }
+
+        function formatMinutesToTime(totalMins) {
+            const hrs = Math.floor(totalMins / 60);
+            const mins = totalMins % 60;
+            return `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
+        }
+
+        function setTodayDate() {
+            document.getElementById('report-date').value = new Date().toISOString().split('T')[0];
+        }
+
+        function renderSubjectDropdown() {
+            const select = document.getElementById('subject-select');
+            select.innerHTML = '<option value="">-- เลือกรายวิชาที่เรียน --</option>';
+            subjectsDB.forEach(subj => {
+                select.innerHTML += `<option value="${subj}">${subj}</option>`;
+            });
+        }
+
+        function renderChecklistCheckboxes() {
+            const container = document.getElementById('checklist-items-container');
+            container.innerHTML = '';
+            issueItemsDB.forEach(item => {
+                container.innerHTML += `
+                    <label class="flex items-start gap-2.5 p-3 rounded-2xl border border-purple-100 bg-slate-50/50 hover:bg-purple-50/80 cursor-pointer transition">
+                        <input type="checkbox" name="issue-check" value="${item}" class="mt-0.5 w-4 h-4 text-purple-600 rounded border-purple-300 focus:ring-purple-400">
+                        <span class="text-sm text-slate-700 leading-snug">${item}</span>
+                    </label>
+                `;
+            });
+        }
+
+        function switchTab(tabName) {
+            if ((tabName === 'reports' || tabName === 'settings') && !isAdminLoggedIn) {
+                openAdminLogin();
+                return;
+            }
+            const tabs = ['checkin', 'reports', 'settings'];
+            tabs.forEach(t => {
+                document.getElementById(`tab-${t}`).classList.add('hidden');
+                const navBtn = document.getElementById(`nav-${t}`);
+                navBtn.classList.remove('bg-white', 'text-indigo-600', 'shadow-sm');
+                navBtn.classList.add('text-white', 'hover:bg-white/20');
+            });
+
+            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+            const activeNav = document.getElementById(`nav-${tabName}`);
+            activeNav.classList.add('bg-white', 'text-indigo-600', 'shadow-sm');
+            activeNav.classList.remove('text-white', 'hover:bg-white/20');
+
+            if (tabName === 'reports') {
+                populateRoomFilter();
+                renderReports();
+            }
+            if (tabName === 'settings') {
+                renderSettingsIssueList();
+                renderSettingsSubjectList();
+            }
+        }
+
+        function openAdminLogin() {
+            showPromptModal("เข้าสู่ระบบผู้ดูแลระบบ (Admin)", "กรุณากรอกรหัสผ่านผู้ดูแลระบบ:", "", (pass) => {
+                if (pass === adminPassword) {
+                    isAdminLoggedIn = true;
+                    document.getElementById('nav-reports').classList.remove('hidden');
+                    document.getElementById('nav-settings').classList.remove('hidden');
+                    document.getElementById('nav-admin-login').classList.add('hidden');
+                    document.getElementById('nav-admin-logout').classList.remove('hidden');
+                    switchTab('reports');
+                } else {
+                    showModal("รหัสผ่านไม่ถูกต้อง", "รหัสผ่านผู้ดูแลระบบไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง");
+                }
+            }, "password");
+        }
+
+        function logoutAdmin() {
+            isAdminLoggedIn = false;
+            document.getElementById('nav-reports').classList.add('hidden');
+            document.getElementById('nav-settings').classList.add('hidden');
+            document.getElementById('nav-admin-login').classList.remove('hidden');
+            document.getElementById('nav-admin-logout').classList.add('hidden');
+            switchTab('checkin');
+            showModal("ออกจากระบบ", "ออกจากโหมดผู้ดูแลระบบเรียบร้อยแล้ว");
+        }
+
+        function changeAdminPassword() {
+            const oldPass = document.getElementById('old-admin-pass').value;
+            const newPass = document.getElementById('new-admin-pass').value.trim();
+            const confirmPass = document.getElementById('confirm-admin-pass').value.trim();
+
+            if (oldPass !== adminPassword) {
+                showModal("ข้อผิดพลาด", "รหัสผ่านเดิมไม่ถูกต้อง");
+                return;
+            }
+            if (!newPass) {
+                showModal("ข้อผิดพลาด", "กรุณากำหนดรหัสผ่านใหม่");
+                return;
+            }
+            if (newPass !== confirmPass) {
+                showModal("ข้อผิดพลาด", "รหัสผ่านใหม่และการยืนยันรหัสผ่านไม่ตรงกัน");
+                return;
+            }
+
+            adminPassword = newPass;
+            localStorage.setItem('lab_admin_pass', newPass);
+            document.getElementById('old-admin-pass').value = '';
+            document.getElementById('new-admin-pass').value = '';
+            document.getElementById('confirm-admin-pass').value = '';
+            syncMasterDataToSheet();
+            showModal("สำเร็จ", "เปลี่ยนรหัสผ่านผู้ดูแลระบบเรียบร้อยแล้ว");
+        }
+
+        function printReportA4() {
+            const tableBodyHtml = document.getElementById('report-table-body').innerHTML;
+            const printWin = window.open('', '_blank', 'width=900,height=700');
+            if (printWin) {
+                printWin.document.write(`
+                    <!DOCTYPE html>
+                    <html lang="th">
+                    <head>
+                        <meta charset="UTF-8">
+                        <title>พิมพ์รายงานการตรวจสอบและแจ้งซ่อมอุปกรณ์ห้องปฏิบัติการคอมพิวเตอร์</title>
+                        <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+                        <style>
+                            @page { size: A4 portrait; margin: 15mm; }
+                            body { font-family: 'Sarabun', sans-serif; color: #000; font-size: 13px; line-height: 1.4; }
+                            .header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; }
+                            .header h1 { font-size: 18px; margin: 0; font-weight: 700; }
+                            .header p { font-size: 13px; margin: 4px 0 0; }
+                            table { width: 100%; border-collapse: collapse; margin-bottom: 25px; }
+                            th, td { border: 1px solid #475569; padding: 6px 8px; text-align: left; vertical-align: top; }
+                            th { background-color: #f1f5f9; font-weight: 700; }
+                            .no-print { display: none !important; }
+                            .signatures { display: flex; justify-content: flex-end; margin-top: 40px; text-align: center; }
+                            .sig-box { width: 45%; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="header">
+                            <h1>แบบรายงานการตรวจสอบและแจ้งซ่อมอุปกรณ์ห้องปฏิบัติการคอมพิวเตอร์ 1204</h1>
+                            <p>กลุ่มสาระการเรียนรู้วิทยาศาสตร์และเทคโนโลยี | จำนวนเครื่องคอมพิวเตอร์ 40 เครื่อง</p>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>วันที่ / คาบเรียน</th>
+                                    <th>หมายเลขเครื่อง</th>
+                                    <th>ผู้แจ้ง (รหัส)</th>
+                                    <th>ชั้น/เลขที่</th>
+                                    <th>ปัญหาที่พบ</th>
+                                    <th>รายละเอียดเพิ่มเติม</th>
+                                    <th>สถานะ / ผลการดำเนินการ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${tableBodyHtml}
+                            </tbody>
+                        </table>
+                        <div class="signatures">
+                            <div class="sig-box">
+                                <p>ลงชื่อ......................................................ผู้รายงาน</p>
+                                <p>(......................................................)</p>
+                                <p>ครูผู้ดูแลห้องปฏิบัติการคอมพิวเตอร์</p>
+                            </div>
+                        </div>
+                        <script>
+                            window.onload = function() {
+                                window.focus();
+                                window.print();
+                            };
+                        <\/script>
+                    </body>
+                    </html>
+                `);
+                printWin.document.close();
+            } else {
+                window.print();
+            }
+        }
+
+        function lookupStudent() {
+            const idInput = document.getElementById('student-id-input').value.trim();
+            if (!idInput) {
+                showModal("แจ้งเตือน", "กรุณากรอกรหัสประจำตัวนักเรียนก่อนค้นหา");
+                return;
+            }
+            const found = studentsDB.find(s => s.id === idInput);
+            if (found) {
+                selectedStudent = found;
+                document.getElementById('disp-student-name').innerText = `${found.name} (รหัส ${found.id})`;
+                document.getElementById('disp-student-class').innerText = `ชั้น ${found.room} เลขที่ ${found.no}`;
+                document.getElementById('student-info-card').classList.remove('hidden');
+            } else {
+                selectedStudent = null;
+                document.getElementById('student-info-card').classList.add('hidden');
+                showModal("ไม่พบข้อมูล", `ไม่พบรหัสประจำตัว "${idInput}" ในฐานข้อมูล กรุณาตรวจสอบหรือติดต่อครูผู้สอน`);
+            }
+        }
+
+        async function startCamera() {
+            try {
+                webcamStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });
+                const video = document.getElementById('webcam-video');
+                video.srcObject = webcamStream;
+                video.classList.remove('hidden');
+                document.getElementById('captured-photo').classList.add('hidden');
+                document.getElementById('camera-placeholder').classList.add('hidden');
+                document.getElementById('btn-start-cam').classList.add('hidden');
+                document.getElementById('btn-capture-cam').classList.remove('hidden');
+                document.getElementById('btn-retake-cam').classList.add('hidden');
+                document.getElementById('camera-status').innerText = "กำลังเปิดกล้อง...";
+            } catch (err) {
+                showModal("ไม่สามารถเปิดกล้องได้", "กรุณาอนุญาตการเข้าถึงกล้องในเบราว์เซอร์ หรือตรวจสอบอุปกรณ์กล้องของเครื่อง");
+            }
+        }
+
+        function capturePhoto() {
+            const video = document.getElementById('webcam-video');
+            const canvas = document.createElement('canvas');
+            canvas.width = 480;
+            canvas.height = 360;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            currentSnapshotData = canvas.toDataURL('image/jpeg', 0.7);
+
+            const img = document.getElementById('captured-photo');
+            img.src = currentSnapshotData;
+            img.classList.remove('hidden');
+            video.classList.add('hidden');
+
+            stopWebcamStream();
+            document.getElementById('btn-capture-cam').classList.add('hidden');
+            document.getElementById('btn-retake-cam').classList.remove('hidden');
+            document.getElementById('camera-status').innerText = "บันทึกภาพยืนยันแล้ว";
+        }
+
+        function retakePhoto() {
+            currentSnapshotData = null;
+            startCamera();
+        }
+
+        function stopWebcamStream() {
+            if (webcamStream) {
+                webcamStream.getTracks().forEach(track => track.stop());
+                webcamStream = null;
+            }
+        }
+
+        function handleEvidenceUpload(event) {
+            const files = Array.from(event.target.files);
+            if (!files.length) return;
+
+            if (currentEvidenceImages.length + files.length > 3) {
+                showModal("เกินจำนวนที่กำหนด", "สามารถแนบภาพถ่ายอุปกรณ์ที่ชำรุดได้สูงสุด 3 ภาพเท่านั้น");
+                event.target.value = "";
+                return;
+            }
+
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        const maxW = 600;
+                        const scale = Math.min(1, maxW / img.width);
+                        canvas.width = img.width * scale;
+                        canvas.height = img.height * scale;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        currentEvidenceImages.push(canvas.toDataURL('image/jpeg', 0.7));
+                        renderEvidencePreviews();
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+            event.target.value = "";
+        }
+
+        function renderEvidencePreviews() {
+            const container = document.getElementById('evidence-preview-container');
+            document.getElementById('evidence-count-badge').innerText = `${currentEvidenceImages.length} / 3 ภาพ`;
+            container.innerHTML = '';
+            currentEvidenceImages.forEach((src, index) => {
+                container.innerHTML += `
+                    <div class="relative group rounded-xl overflow-hidden border border-slate-300 aspect-video bg-slate-200">
+                        <img src="${src}" class="w-full h-full object-cover">
+                        <button type="button" onclick="removeEvidenceImage(${index})" class="absolute top-1 right-1 bg-rose-600 text-white rounded-full w-6 h-6 text-xs flex items-center justify-center shadow hover:bg-rose-700">✕</button>
+                    </div>
+                `;
+            });
+        }
+
+        function removeEvidenceImage(idx) {
+            currentEvidenceImages.splice(idx, 1);
+            renderEvidencePreviews();
+        }
+
+        async function submitRepairReport() {
+            if (!selectedStudent) {
+                showModal("ข้อมูลไม่ครบถ้วน", "กรุณากรอกรหัสประจำตัวนักเรียนและกดค้นหาเพื่อยืนยันตัวตน");
+                return;
+            }
+            if (!currentSnapshotData) {
+                showModal("ข้อมูลไม่ครบถ้วน", "กรุณาถ่ายภาพยืนยันตัวตนผู้แจ้งผ่านกล้องก่อนส่งรายงาน");
+                return;
+            }
+
+            const pcNumber = document.getElementById('pc-number').value;
+            const reportDate = document.getElementById('report-date').value;
+            const period = document.getElementById('class-period').value;
+            const subject = document.getElementById('subject-select').value;
+            const notes = document.getElementById('issue-notes').value.trim();
+            const checkedIssues = Array.from(document.querySelectorAll('input[name="issue-check"]:checked')).map(cb => cb.value);
+
+            if (!pcNumber || !reportDate || !subject) {
+                showModal("ข้อมูลไม่ครบถ้วน", "กรุณาเลือกหมายเลขเครื่อง วันที่ และรายวิชาที่เรียนให้ครบถ้วน");
+                return;
+            }
+            if (checkedIssues.length === 0) {
+                showModal("ข้อมูลไม่ครบถ้วน", "กรุณาเลือกรายการปัญหาหรืออุปกรณ์ที่ชำรุดอย่างน้อย 1 รายการ");
+                return;
+            }
+
+            const btnSubmit = document.getElementById('btn-submit-report');
+            btnSubmit.disabled = true;
+            btnSubmit.innerText = "⏳ กำลังบันทึกและอัปโหลดภาพ...";
+
+            const newReport = {
+                id: Date.now(),
+                date: reportDate,
+                period: period,
+                subject: subject,
+                pc: pcNumber,
+                studentId: selectedStudent.id,
+                studentName: selectedStudent.name,
+                room: selectedStudent.room,
+                no: selectedStudent.no,
+                issues: checkedIssues,
+                notes: notes || "-",
+                status: "ยังไม่ได้ดำเนินการ",
+                resolver: "",
+                actionNote: "",
+                actionUpdatedAt: "",
+                selfie: currentSnapshotData,
+                evidenceImages: [...currentEvidenceImages]
+            };
+
+            // ส่งขึ้น Google Sheets & Google Drive หากตั้งค่า URL ไว้
+            const apiRes = await postToGoogleSheet({ action: 'submitReport', data: newReport });
+            const savedReport = (apiRes && apiRes.report) ? apiRes.report : newReport;
+
+            reportsDB.unshift(savedReport);
+            localStorage.setItem('lab_reports', JSON.stringify(reportsDB));
+
+            btnSubmit.disabled = false;
+            btnSubmit.innerText = "📨 ส่งรายงานแจ้งซ่อม";
+
+            showModal("ส่งรายงานสำเร็จ", `บันทึกข้อมูลแจ้งซ่อมสำหรับ ${pcNumber} เรียบร้อยแล้ว ขอบคุณที่ช่วยดูแลห้องปฏิบัติการคอมพิวเตอร์`);
+            resetCheckinForm();
+        }
+
+        function resetCheckinForm() {
+            selectedStudent = null;
+            currentSnapshotData = null;
+            currentEvidenceImages = [];
+            stopWebcamStream();
+
+            document.getElementById('student-id-input').value = '';
+            document.getElementById('student-info-card').classList.add('hidden');
+            document.getElementById('webcam-video').classList.add('hidden');
+            document.getElementById('captured-photo').classList.add('hidden');
+            document.getElementById('camera-placeholder').classList.remove('hidden');
+            document.getElementById('btn-start-cam').classList.remove('hidden');
+            document.getElementById('btn-capture-cam').classList.add('hidden');
+            document.getElementById('btn-retake-cam').classList.add('hidden');
+            document.getElementById('camera-status').innerText = "พร้อมใช้งาน";
+
+            document.getElementById('pc-number').value = '';
+            document.getElementById('subject-select').value = '';
+            document.getElementById('issue-notes').value = '';
+            document.querySelectorAll('input[name="issue-check"]').forEach(cb => cb.checked = false);
+            renderEvidencePreviews();
+        }
+
+        function populateRoomFilter() {
+            const roomSelect = document.getElementById('filter-room');
+            const currentVal = roomSelect.value;
+            const rooms = [...new Set(reportsDB.map(r => r.room))].sort();
+            roomSelect.innerHTML = '<option value="">ทุกห้องเรียน</option>';
+            rooms.forEach(rm => {
+                roomSelect.innerHTML += `<option value="${rm}">${rm}</option>`;
+            });
+            roomSelect.value = currentVal;
+        }
+
+        function clearReportFilters() {
+            document.getElementById('filter-date-start').value = '';
+            document.getElementById('filter-date-end').value = '';
+            document.getElementById('filter-room').value = '';
+            document.getElementById('filter-pc').value = '';
+            document.getElementById('filter-period').value = '';
+            document.getElementById('filter-status').value = '';
+            renderReports();
+        }
+
+        function filterByClickedDate(dateStr) {
+            document.getElementById('filter-date-start').value = dateStr;
+            document.getElementById('filter-date-end').value = dateStr;
+            renderReports();
+        }
+
+        function renderReports() {
+            const tbody = document.getElementById('report-table-body');
+            const dStart = document.getElementById('filter-date-start').value;
+            const dEnd = document.getElementById('filter-date-end').value;
+            const fRoom = document.getElementById('filter-room').value;
+            const fPc = document.getElementById('filter-pc').value;
+            const fPeriod = document.getElementById('filter-period').value;
+            const fStatus = document.getElementById('filter-status').value;
+
+            const filtered = reportsDB.filter(r => {
+                const currentStatus = r.status || 'ยังไม่ได้ดำเนินการ';
+                if (dStart && r.date < dStart) return false;
+                if (dEnd && r.date > dEnd) return false;
+                if (fRoom && r.room !== fRoom) return false;
+                if (fPc && r.pc !== fPc) return false;
+                if (fPeriod && r.period !== fPeriod) return false;
+                if (fStatus && currentStatus !== fStatus) return false;
+                return true;
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="9" class="py-8 text-center text-slate-400">ไม่พบรายการแจ้งซ่อมตามเงื่อนไขที่เลือก</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = '';
+            filtered.forEach(r => {
+                const currentStatus = r.status || 'ยังไม่ได้ดำเนินการ';
+                let badgeClass = 'bg-rose-100 text-rose-800 border-rose-200';
+                let statusLabel = '🔴 ยังไม่ได้ดำเนินการ';
+                if (currentStatus === 'รอดำเนินการ') {
+                    badgeClass = 'bg-amber-100 text-amber-800 border-amber-200';
+                    statusLabel = '🟡 รอดำเนินการ (รับเรื่องแล้ว)';
+                } else if (currentStatus === 'ดำเนินการแล้ว') {
+                    badgeClass = 'bg-emerald-100 text-emerald-800 border-emerald-200';
+                    statusLabel = '🟢 ดำเนินการแล้ว';
+                }
+
+                const issuesHtml = r.issues.map(i => `• ${i}`).join('<br>');
+                const evidenceThumbs = (r.evidenceImages || []).map((imgSrc, i) => `
+                    <img src="${imgSrc}" onclick="openImageModal('${imgSrc}', 'หลักฐานอุปกรณ์ชำรุด (${r.pc}) ภาพที่ ${i+1}')" class="w-9 h-9 object-cover rounded border-2 border-rose-400 cursor-pointer hover:scale-110 transition" title="คลิกดูภาพอุปกรณ์ชำรุด">
+                `).join('');
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50">
+                        <td class="py-2.5 px-3">
+                            <button type="button" onclick="filterByClickedDate('${r.date}')" class="font-bold text-indigo-700 hover:text-pink-600 underline decoration-dotted underline-offset-4 cursor-pointer text-left" title="คลิกเพื่อกรองดูข้อมูลเฉพาะวันที่ ${r.date}">📅 ${r.date}</button>
+                            <div class="text-xs text-slate-500 mt-0.5">${r.period}</div>
+                            <div class="text-xs text-indigo-600">${r.subject}</div>
+                        </td>
+                        <td class="py-2.5 px-3 font-bold text-indigo-800 whitespace-nowrap">${r.pc}</td>
+                        <td class="py-2.5 px-3">
+                            <div class="font-medium">${r.studentName}</div>
+                            <div class="text-xs text-slate-500">รหัส: ${r.studentId}</div>
+                        </td>
+                        <td class="py-2.5 px-3 whitespace-nowrap">${r.room} / เลขที่ ${r.no}</td>
+                        <td class="py-2.5 px-3 text-rose-700 text-xs leading-relaxed">${issuesHtml}</td>
+                        <td class="py-2.5 px-3 text-slate-600 text-xs">${r.notes}</td>
+                        <td class="py-2.5 px-3">
+                            <span class="inline-block px-2.5 py-1 rounded-full text-xs font-bold border ${badgeClass}">${statusLabel}</span>
+                            ${r.resolver ? `<div class="text-xs text-indigo-800 font-semibold mt-1.5">👤 ผู้แก้ไข: ${r.resolver}</div>` : ''}
+                            ${r.actionNote ? `<div class="text-xs text-slate-700 mt-1 bg-slate-50 p-1.5 rounded-lg border border-slate-200"><strong>ผลแก้ไข:</strong> ${r.actionNote}</div>` : ''}
+                            ${r.actionUpdatedAt ? `<div class="text-[11px] text-slate-400 mt-0.5">อัปเดต: ${r.actionUpdatedAt}</div>` : ''}
+                        </td>
+                        <td class="py-2.5 px-3 no-print">
+                            <div class="flex flex-wrap gap-1.5 items-center">
+                                ${r.selfie ? `<img src="${r.selfie}" onclick="openImageModal('${r.selfie}', 'ภาพยืนยันตัวตน: ${r.studentName}')" class="w-9 h-9 object-cover rounded border-2 border-indigo-400 cursor-pointer hover:scale-110 transition" title="ภาพยืนยันตัวตนผู้แจ้ง">` : ''}
+                                ${evidenceThumbs}
+                            </div>
+                        </td>
+                        <td class="py-2.5 px-3 text-center no-print">
+                            <div class="flex flex-col gap-1.5 items-center">
+                                <button type="button" onclick="openStatusModal(${r.id})" class="w-full bg-indigo-100 text-indigo-700 hover:bg-indigo-200 text-xs font-bold px-2.5 py-1 rounded-xl transition whitespace-nowrap">📝 อัปเดตผล</button>
+                                <button type="button" onclick="deleteReport(${r.id})" class="w-full text-rose-500 hover:text-rose-700 text-xs font-medium px-2 py-1 rounded-xl hover:bg-rose-50 transition">ลบ</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function openStatusModal(reportId) {
+            const report = reportsDB.find(r => r.id === reportId);
+            if (!report) return;
+            document.getElementById('status-report-id').value = report.id;
+            document.getElementById('status-modal-subtitle').innerText = `${report.pc} | วันที่ ${report.date} (${report.studentName})`;
+            document.getElementById('status-select').value = report.status || 'ยังไม่ได้ดำเนินการ';
+            document.getElementById('status-resolver').value = report.resolver || '';
+            document.getElementById('status-action-note').value = report.actionNote || '';
+            document.getElementById('status-modal').classList.remove('hidden');
+        }
+
+        function closeStatusModal() {
+            document.getElementById('status-modal').classList.add('hidden');
+        }
+
+        async function saveStatusUpdate() {
+            const reportId = Number(document.getElementById('status-report-id').value);
+            const newStatus = document.getElementById('status-select').value;
+            const resolver = document.getElementById('status-resolver').value.trim();
+            const actionNote = document.getElementById('status-action-note').value.trim();
+
+            const idx = reportsDB.findIndex(r => r.id === reportId);
+            if (idx !== -1) {
+                const now = new Date();
+                const timestamp = `${now.toISOString().split('T')[0]} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')} น.`;
+                reportsDB[idx].status = newStatus;
+                reportsDB[idx].resolver = resolver;
+                reportsDB[idx].actionNote = actionNote;
+                reportsDB[idx].actionUpdatedAt = timestamp;
+                localStorage.setItem('lab_reports', JSON.stringify(reportsDB));
+
+                await postToGoogleSheet({
+                    action: 'updateReportStatus',
+                    data: { id: reportId, status: newStatus, resolver, actionNote, actionUpdatedAt: timestamp }
+                });
+
+                closeStatusModal();
+                renderReports();
+            }
+        }
+
+        function deleteReport(id) {
+            showConfirmModal("ยืนยันการลบ", "คุณต้องการลบรายการแจ้งซ่อมนี้ใช่หรือไม่?", async () => {
+                reportsDB = reportsDB.filter(r => r.id !== id);
+                localStorage.setItem('lab_reports', JSON.stringify(reportsDB));
+                await postToGoogleSheet({ action: 'deleteReport', id: id });
+                renderReports();
+            });
+        }
+
+        function openImageModal(src, caption) {
+            document.getElementById('lightbox-img').src = src;
+            document.getElementById('lightbox-caption').innerText = caption;
+            document.getElementById('image-preview-modal').classList.remove('hidden');
+        }
+
+        function closeImageModal() {
+            document.getElementById('image-preview-modal').classList.add('hidden');
+        }
+
+        // ==================== การตั้งค่าระบบ (Settings) ====================
+
+        function updateStudentCount() {
+            document.getElementById('total-students-count').innerText = studentsDB.length;
+        }
+
+        function importStudentsCSV(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const lines = e.target.result.split(/\r?\n/).filter(line => line.trim() !== '');
+                const imported = [];
+                lines.forEach((line, index) => {
+                    const cols = line.split(',').map(c => c.trim());
+                    if (cols.length >= 4 && !(index === 0 && cols[0].includes('รหัส'))) {
+                        imported.push({ id: cols[0], name: cols[1], room: cols[2], no: cols[3] });
+                    }
+                });
+                if (imported.length > 0) {
+                    studentsDB = imported;
+                    localStorage.setItem('lab_students', JSON.stringify(studentsDB));
+                    updateStudentCount();
+                    syncMasterDataToSheet();
+                    showModal("นำเข้าสำเร็จ", `นำเข้าข้อมูลนักเรียนจำนวน ${imported.length} คนเรียบร้อยแล้ว`);
+                } else {
+                    showModal("รูปแบบไฟล์ไม่ถูกต้อง", "ไม่พบข้อมูลนักเรียนที่ถูกต้อง กรุณาตรวจสอบรูปแบบคอลัมน์ CSV");
+                }
+            };
+            reader.readAsText(file, 'UTF-8');
+        }
+
+        function loadGoogleConfigInputs() {
+            document.getElementById('cfg-script-url').value = googleConfig.scriptUrl || '';
+        }
+
+        function saveGoogleConfig() {
+            googleConfig = {
+                scriptUrl: document.getElementById('cfg-script-url').value.trim()
+            };
+            localStorage.setItem('lab_google_cfg', JSON.stringify(googleConfig));
+            if (googleConfig.scriptUrl) {
+                fetchFromGoogleSheet(true);
+            } else {
+                showModal("บันทึกสำเร็จ", "บันทึกการตั้งค่าเรียบร้อยแล้ว (โหมดออฟไลน์)");
+            }
+        }
+
+        async function syncMasterDataToSheet() {
+            if (!googleConfig.scriptUrl) return;
+            await postToGoogleSheet({
+                action: 'syncMasterData',
+                data: {
+                    students: studentsDB,
+                    issues: issueItemsDB,
+                    subjects: subjectsDB,
+                    adminPassword: adminPassword
+                }
+            });
+            showModal("อัปโหลดสำเร็จ", "ซิงค์ข้อมูลรายชื่อนักเรียน รายการปัญหา และรายวิชาขึ้น Google Sheets เรียบร้อยแล้ว");
+        }
+
+        function renderSettingsIssueList() {
+            const ul = document.getElementById('settings-issue-list');
+            ul.innerHTML = '';
+            issueItemsDB.forEach((item, index) => {
+                ul.innerHTML += `
+                    <li class="flex items-center justify-between gap-2 bg-white p-2 rounded-lg border border-slate-200 text-xs">
+                        <span class="text-slate-700">${item}</span>
+                        <div class="flex gap-1 shrink-0">
+                            <button type="button" onclick="editIssueItem(${index})" class="px-2 py-1 bg-amber-100 text-amber-800 rounded hover:bg-amber-200">แก้ไข</button>
+                            <button type="button" onclick="deleteIssueItem(${index})" class="px-2 py-1 bg-rose-100 text-rose-700 rounded hover:bg-rose-200">ลบ</button>
+                        </div>
+                    </li>
+                `;
+            });
+        }
+
+        function addIssueItem() {
+            const input = document.getElementById('new-issue-input');
+            const val = input.value.trim();
+            if (!val) return;
+            issueItemsDB.push(val);
+            localStorage.setItem('lab_issues', JSON.stringify(issueItemsDB));
+            input.value = '';
+            renderSettingsIssueList();
+            renderChecklistCheckboxes();
+            syncMasterDataToSheet();
+        }
+
+        function editIssueItem(index) {
+            showPromptModal("แก้ไขรายการปัญหา", "ระบุชื่อรายการปัญหาใหม่:", issueItemsDB[index], (newVal) => {
+                if (newVal && newVal.trim()) {
+                    issueItemsDB[index] = newVal.trim();
+                    localStorage.setItem('lab_issues', JSON.stringify(issueItemsDB));
+                    renderSettingsIssueList();
+                    renderChecklistCheckboxes();
+                    syncMasterDataToSheet();
+                }
+            });
+        }
+
+        function deleteIssueItem(index) {
+            showConfirmModal("ลบรายการปัญหา", `ต้องการลบ "${issueItemsDB[index]}" ใช่หรือไม่?`, () => {
+                issueItemsDB.splice(index, 1);
+                localStorage.setItem('lab_issues', JSON.stringify(issueItemsDB));
+                renderSettingsIssueList();
+                renderChecklistCheckboxes();
+                syncMasterDataToSheet();
+            });
+        }
+
+        function renderSettingsSubjectList() {
+            const ul = document.getElementById('settings-subject-list');
+            ul.innerHTML = '';
+            subjectsDB.forEach((subj, index) => {
+                ul.innerHTML += `
+                    <li class="flex items-center justify-between gap-2 bg-white p-2 rounded-lg border border-slate-200 text-xs">
+                        <span class="text-slate-700">${subj}</span>
+                        <div class="flex gap-1 shrink-0">
+                            <button type="button" onclick="editSubject(${index})" class="px-2 py-1 bg-amber-100 text-amber-800 rounded hover:bg-amber-200">แก้ไข</button>
+                            <button type="button" onclick="deleteSubject(${index})" class="px-2 py-1 bg-rose-100 text-rose-700 rounded hover:bg-rose-200">ลบ</button>
+                        </div>
+                    </li>
+                `;
+            });
+        }
+
+        function addSubject() {
+            const input = document.getElementById('new-subject-input');
+            const val = input.value.trim();
+            if (!val) return;
+            subjectsDB.push(val);
+            localStorage.setItem('lab_subjects', JSON.stringify(subjectsDB));
+            input.value = '';
+            renderSettingsSubjectList();
+            renderSubjectDropdown();
+            syncMasterDataToSheet();
+        }
+
+        function editSubject(index) {
+            showPromptModal("แก้ไขรายวิชา", "ระบุรหัสวิชาและชื่อวิชาใหม่:", subjectsDB[index], (newVal) => {
+                if (newVal && newVal.trim()) {
+                    subjectsDB[index] = newVal.trim();
+                    localStorage.setItem('lab_subjects', JSON.stringify(subjectsDB));
+                    renderSettingsSubjectList();
+                    renderSubjectDropdown();
+                    syncMasterDataToSheet();
+                }
+            });
+        }
+
+        function deleteSubject(index) {
+            showConfirmModal("ลบรายวิชา", `ต้องการลบรายวิชา "${subjectsDB[index]}" ใช่หรือไม่?`, () => {
+                subjectsDB.splice(index, 1);
+                localStorage.setItem('lab_subjects', JSON.stringify(subjectsDB));
+                renderSettingsSubjectList();
+                renderSubjectDropdown();
+                syncMasterDataToSheet();
+            });
+        }
+
+        function exportBackupJSON() {
+            const backup = {
+                students: studentsDB,
+                issues: issueItemsDB,
+                subjects: subjectsDB,
+                reports: reportsDB,
+                config: googleConfig,
+                exportedAt: new Date().toISOString()
+            };
+            const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `lab_system_backup_${new Date().toISOString().slice(0, 10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function restoreBackupJSON(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.students) studentsDB = data.students;
+                    if (data.issues) issueItemsDB = data.issues;
+                    if (data.subjects) subjectsDB = data.subjects;
+                    if (data.reports) reportsDB = data.reports;
+                    if (data.config) googleConfig = data.config;
+
+                    localStorage.setItem('lab_students', JSON.stringify(studentsDB));
+                    localStorage.setItem('lab_issues', JSON.stringify(issueItemsDB));
+                    localStorage.setItem('lab_subjects', JSON.stringify(subjectsDB));
+                    localStorage.setItem('lab_reports', JSON.stringify(reportsDB));
+                    localStorage.setItem('lab_google_cfg', JSON.stringify(googleConfig));
+
+                    updateStudentCount();
+                    renderChecklistCheckboxes();
+                    renderSubjectDropdown();
+                    renderSettingsIssueList();
+                    renderSettingsSubjectList();
+                    loadGoogleConfigInputs();
+                    showModal("กู้คืนข้อมูลสำเร็จ", "นำเข้าข้อมูลสำรองกลับเข้าสู่ระบบเรียบร้อยแล้ว");
+                } catch (err) {
+                    showModal("ข้อผิดพลาด", "ไฟล์สำรองข้อมูลไม่ถูกต้องหรือเสียหาย");
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function confirmClearAllReports() {
+            showConfirmModal("ล้างข้อมูลประวัติในเครื่อง", "ต้องการลบประวัติการแจ้งซ่อมในหน่วยความจำเครื่องใช่หรือไม่? (หากต้องการล้างใน Google Sheet ให้กดผ่านเมนูใน Google Sheet)", () => {
+                reportsDB = [];
+                localStorage.setItem('lab_reports', JSON.stringify(reportsDB));
+                showModal("ล้างข้อมูลเรียบร้อย", "ลบประวัติการแจ้งซ่อมในเครื่องเรียบร้อยแล้ว");
+            });
+        }
+
+        // ==================== ระบบ Modal กลาง ====================
+
+        function showModal(title, msg) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-message').innerText = msg;
+            document.getElementById('modal-input-container').classList.add('hidden');
+            document.getElementById('modal-cancel-btn').classList.add('hidden');
+            const confirmBtn = document.getElementById('modal-confirm-btn');
+            confirmBtn.innerText = "ตกลง";
+            confirmBtn.onclick = closeModal;
+            document.getElementById('custom-modal').classList.remove('hidden');
+        }
+
+        function showConfirmModal(title, msg, onConfirm) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-message').innerText = msg;
+            document.getElementById('modal-input-container').classList.add('hidden');
+            document.getElementById('modal-cancel-btn').classList.remove('hidden');
+            const confirmBtn = document.getElementById('modal-confirm-btn');
+            confirmBtn.innerText = "ยืนยัน";
+            confirmBtn.onclick = () => {
+                closeModal();
+                if (onConfirm) onConfirm();
+            };
+            document.getElementById('custom-modal').classList.remove('hidden');
+        }
+
+        function showPromptModal(title, msg, defaultValue, onSave, inputType = "text") {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-message').innerText = msg;
+            const inputContainer = document.getElementById('modal-input-container');
+            const input = document.getElementById('modal-input');
+            input.type = inputType;
+            input.value = defaultValue || '';
+            inputContainer.classList.remove('hidden');
+            document.getElementById('modal-cancel-btn').classList.remove('hidden');
+            const confirmBtn = document.getElementById('modal-confirm-btn');
+            confirmBtn.innerText = "บันทึก";
+            confirmBtn.onclick = () => {
+                const val = input.value;
+                closeModal();
+                if (onSave) onSave(val);
+            };
+            document.getElementById('custom-modal').classList.remove('hidden');
+            setTimeout(() => input.focus(), 50);
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
