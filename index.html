@@ -247,7 +247,7 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- 1. นำเข้าข้อมูลนักเรียน (CSV) -->
+                    <!-- 1. นำเข้าข้อมูลนักเรียน (CSV / Excel) -->
                     <div class="p-5 border border-indigo-100 rounded-2xl space-y-3 bg-indigo-50/40">
                         <h3 class="font-bold text-sm text-indigo-900">1. นำเข้าข้อมูลนักเรียน (CSV)</h3>
                         <p class="text-xs text-slate-500">รูปแบบคอลัมน์: <code class="bg-white border border-indigo-100 px-1.5 py-0.5 rounded-md text-indigo-700">รหัสประจำตัว,ชื่อ-นามสกุล,ห้องเรียน,เลขที่</code></p>
@@ -255,15 +255,26 @@
                         <div class="text-xs text-slate-600">จำนวนนักเรียนในระบบปัจจุบัน: <strong id="total-students-count" class="text-indigo-700">0</strong> คน</div>
                     </div>
 
-                    <!-- 2. ตั้งค่าการเชื่อมต่อ Google Apps Script Web App URL -->
+                    <!-- 2. ตั้งค่าการเชื่อมต่อ Google Apps Script Web App URL / Sheet ID / Path รูปภาพ -->
                     <div class="p-5 border border-purple-100 rounded-2xl space-y-3 bg-purple-50/40">
-                        <h3 class="font-bold text-sm text-purple-900">2. ตั้งค่าการเชื่อมต่อ Google Apps Script Web App URL</h3>
-                        <p class="text-xs text-slate-500">วางลิงก์ Web App URL (ลงท้ายด้วย <code class="bg-white px-1 rounded text-purple-700">/exec</code>) ที่ได้จากการ Deploy</p>
+                        <h3 class="font-bold text-sm text-purple-900">2. ตั้งค่าฐานข้อมูล (Google Sheet ID & Path เก็บรูปภาพ)</h3>
+                        <p class="text-xs text-slate-500">กรณีทำสำเนาไปใช้กับห้องอื่น สามารถเปลี่ยน Sheet ID และโฟลเดอร์เก็บรูปภาพได้ที่นี่</p>
                         <div class="space-y-2">
-                            <input type="url" id="cfg-script-url" placeholder="https://script.google.com/macros/s/...../exec" class="w-full bg-white border border-purple-200 rounded-xl px-3 py-2 text-xs">
+                            <div>
+                                <label class="block text-[11px] font-semibold text-purple-800 mb-0.5">Apps Script Web App URL (<code class="bg-white px-1 rounded">/exec</code>)</label>
+                                <input type="url" id="cfg-script-url" placeholder="https://script.google.com/macros/s/...../exec" class="w-full bg-white border border-purple-200 rounded-xl px-3 py-1.5 text-xs">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-purple-800 mb-0.5">Google Sheet ID (เปลี่ยนฐานข้อมูลห้องอื่น)</label>
+                                <input type="text" id="cfg-sheet-id" placeholder="วาง Sheet ID (เช่น 1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms)" class="w-full bg-white border border-purple-200 rounded-xl px-3 py-1.5 text-xs">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-purple-800 mb-0.5">Google Drive Folder ID / Path (โฟลเดอร์เก็บรูปภาพ)</label>
+                                <input type="text" id="cfg-drive-folder" placeholder="วาง Folder ID หรือลิงก์โฟลเดอร์ Google Drive" class="w-full bg-white border border-purple-200 rounded-xl px-3 py-1.5 text-xs">
+                            </div>
                         </div>
-                        <div class="flex flex-wrap gap-2">
-                            <button type="button" onclick="saveGoogleConfig()" class="bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-semibold hover:bg-emerald-600 transition">💾 บันทึก URL และดึงข้อมูล</button>
+                        <div class="flex flex-wrap gap-2 pt-1">
+                            <button type="button" onclick="saveGoogleConfig()" class="bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-semibold hover:bg-emerald-600 transition">💾 บันทึกการตั้งค่าและซิงค์</button>
                             <button type="button" onclick="syncMasterDataToSheet()" class="bg-indigo-500 text-white px-4 py-2 rounded-xl text-xs font-semibold hover:bg-indigo-600 transition">☁️ อัปโหลดข้อมูลตั้งต้นขึ้น Sheet</button>
                         </div>
                     </div>
@@ -412,7 +423,7 @@
         let issueItemsDB = JSON.parse(localStorage.getItem('lab_issues')) || defaultIssues;
         let subjectsDB = JSON.parse(localStorage.getItem('lab_subjects')) || defaultSubjects;
         let reportsDB = JSON.parse(localStorage.getItem('lab_reports')) || [];
-        let googleConfig = JSON.parse(localStorage.getItem('lab_google_cfg')) || { scriptUrl: DEFAULT_SCRIPT_URL };
+        let googleConfig = JSON.parse(localStorage.getItem('lab_google_cfg')) || { scriptUrl: DEFAULT_SCRIPT_URL, sheetId: '', driveFolderId: '' };
 
         let selectedStudent = null;
         let webcamStream = null;
@@ -440,7 +451,11 @@
             const badge = document.getElementById('sync-status-badge');
             badge.innerText = "กำลังซิงค์ข้อมูล...";
             try {
-                const res = await fetch(`${googleConfig.scriptUrl}?action=getAllData`);
+                const queryParams = new URLSearchParams({
+                    action: 'getAllData',
+                    sheetId: extractGoogleId(googleConfig.sheetId || '')
+                });
+                const res = await fetch(`${googleConfig.scriptUrl}?${queryParams.toString()}`);
                 const json = await res.json();
                 if (json.status === 'success' && json.data) {
                     if (json.data.students && json.data.students.length > 0) {
@@ -459,6 +474,12 @@
                         reportsDB = json.data.reports;
                         localStorage.setItem('lab_reports', JSON.stringify(reportsDB));
                     }
+                    if (json.data.config) {
+                        if (!googleConfig.sheetId && json.data.config.sheetId) googleConfig.sheetId = json.data.config.sheetId;
+                        if (!googleConfig.driveFolderId && json.data.config.driveFolderId) googleConfig.driveFolderId = json.data.config.driveFolderId;
+                        localStorage.setItem('lab_google_cfg', JSON.stringify(googleConfig));
+                        loadGoogleConfigInputs();
+                    }
                     updateStudentCount();
                     renderChecklistCheckboxes();
                     renderSubjectDropdown();
@@ -468,6 +489,9 @@
                     }
                     badge.innerText = "🟢 เชื่อมต่อ Google Sheet";
                     if (showNotify) showModal("ซิงค์สำเร็จ", "ดึงข้อมูลล่าสุดจาก Google Sheets เรียบร้อยแล้ว");
+                } else {
+                    badge.innerText = "⚠️ ตรวจสอบ Sheet ID";
+                    if (showNotify) showModal("เกิดข้อผิดพลาด", json.message || "ไม่สามารถอ่านข้อมูลจาก Sheet ID ที่ระบุได้");
                 }
             } catch (err) {
                 badge.innerText = "⚠️ ออฟไลน์ (Local)";
@@ -475,13 +499,26 @@
             }
         }
 
+        // แยกเฉพาะ ID กรณีผู้ใช้คัดลอกมาทั้ง URL ของ Google Sheet หรือ Google Drive Folder
+        function extractGoogleId(input) {
+            if (!input) return '';
+            const trimmed = input.trim();
+            const match = trimmed.match(/[-\w]{25,}/);
+            return match ? match[0] : trimmed;
+        }
+
         // ส่งข้อมูลไปยัง Google Apps Script (POST)
         async function postToGoogleSheet(payload) {
             if (!googleConfig.scriptUrl) return null;
             try {
+                const enrichedPayload = {
+                    ...payload,
+                    sheetId: extractGoogleId(googleConfig.sheetId || ''),
+                    driveFolderId: extractGoogleId(googleConfig.driveFolderId || '')
+                };
                 const res = await fetch(googleConfig.scriptUrl, {
                     method: 'POST',
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify(enrichedPayload)
                 });
                 return await res.json();
             } catch (err) {
@@ -1076,7 +1113,10 @@
         // ==================== การตั้งค่าระบบ (Settings) ====================
 
         function updateStudentCount() {
-            document.getElementById('total-students-count').innerText = studentsDB.length;
+            const countEl = document.getElementById('total-students-count');
+            if (countEl) {
+                countEl.innerText = studentsDB.length;
+            }
         }
 
         function importStudentsCSV(event) {
@@ -1107,13 +1147,18 @@
 
         function loadGoogleConfigInputs() {
             document.getElementById('cfg-script-url').value = googleConfig.scriptUrl || '';
+            document.getElementById('cfg-sheet-id').value = googleConfig.sheetId || '';
+            document.getElementById('cfg-drive-folder').value = googleConfig.driveFolderId || '';
         }
 
         function saveGoogleConfig() {
             googleConfig = {
-                scriptUrl: document.getElementById('cfg-script-url').value.trim()
+                scriptUrl: document.getElementById('cfg-script-url').value.trim(),
+                sheetId: extractGoogleId(document.getElementById('cfg-sheet-id').value),
+                driveFolderId: extractGoogleId(document.getElementById('cfg-drive-folder').value)
             };
             localStorage.setItem('lab_google_cfg', JSON.stringify(googleConfig));
+            loadGoogleConfigInputs();
             if (googleConfig.scriptUrl) {
                 fetchFromGoogleSheet(true);
             } else {
